@@ -1,0 +1,6 @@
+SERVICE <%= service_name %>
+DOMAIN <%= service_name %>.tinysvc.dev
+DOMAIN <%= service_name %>.tinysvc.com
+<%= for entry <- tinyfile_entries do %>
+<%= entry %>
+<% end %>

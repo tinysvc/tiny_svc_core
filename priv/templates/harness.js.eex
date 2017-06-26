@@ -1,0 +1,30 @@
+var readline = require("readline");
+var protobuf = require("protobufjs");
+var protofile = "./services/foo/model.proto";
+var function_name = process.argv[2];
+
+var handler = require("./" + function_name + ".js");
+protobuf.load(protofile, function(err, root) {
+  if (err) {
+    console.log(err);
+  }
+  var Model = root.lookupType("Model");
+
+  var rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: false
+  });
+
+  // receive tinysvc messages via stdin
+  rl.on('line', function(line) {
+    var buffer = Buffer.from(line, 'base64');
+    var model = Model.decode(buffer);
+    handler(model, function(err, response) {
+      model = Model.fromObject(model);
+      response_buffer = Model.encode(model).finish();
+      // sends response to tinysvc via stdout
+      console.log(model.invocationId + "~" + response_buffer.toString('base64'));
+    });
+  });
+});
