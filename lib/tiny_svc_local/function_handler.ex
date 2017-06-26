@@ -48,7 +48,6 @@ defmodule TinySvcLocal.FunctionHandler do
     prefix = invocation_id <> "~"
     receive do
       {^proc_pid, :data, :out, data} ->
-        IO.inspect(data)
         if String.starts_with?(data, prefix) do
           data = String.trim(data)
           |> String.split("~")
@@ -63,12 +62,12 @@ defmodule TinySvcLocal.FunctionHandler do
   end
 
   defp spawn_function(service, function_name) do
-    filepath = "services/#{service.name}/local_harness.js #{function_name}"
+    filepath = "services/#{service.name}/harness.js #{function_name}"
     Porcelain.spawn_shell("node #{filepath}", [in: :receive, out: {:send, self()}])
   end
 
   defp via_tuple(service, function_name) do
     identifier = "#{service.name}~#{function_name}"
-    {:via, Registry, {:local_function_handler_registry, identifier}}
+    {:via, Registry, {:function_handler_registry, identifier}}
   end
 end

@@ -18,7 +18,7 @@ defmodule TinySvcCore.Mixfile do
     # Specify extra applications you'll use from Erlang/Elixir
     [
       mod: {TinySvcCore, []},
-      extra_applications: [:logger, :cowboy, :plug]
+      extra_applications: [:logger, :cowboy, :plug, :porcelain, :exprotobuf, :uuid]
     ]
   end
 
@@ -42,6 +42,7 @@ defmodule TinySvcCore.Mixfile do
       {:cowboy, "~> 1.0"},
       {:poison, "~> 2.0"},
       {:uuid, "~> 1.1"},
+      {:porcelain, "~> 2.0"},
       {:double, "~> 0.6.0", only: :test},
     ]
   end

@@ -37,7 +37,7 @@ defmodule TinySvc.TinyFileTest do
         {"HTTP", ["GET", "/hello"], ["hello"]},
         {"HTTP", ["GET", "/foo"], ["foo", "bar"]}
       ]
-      result = TinyFile.create(service_name, entries, context.deps)
+      TinyFile.create(service_name, entries, context.deps)
       assert_receive {:write!, "services/test-service/Tinyfile", contents}
       assert contents |> String.contains?("HTTP GET /hello -> hello")
       assert contents |> String.contains?("HTTP GET /foo -> foo, bar")

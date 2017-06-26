@@ -6,35 +6,30 @@ defmodule TinySvc.InvokerTest do
   alias TinySvc.Model.Model
 
   describe "invoke" do
-    test "invokes the configured function handler" do
-      function_handler_stub = TinySvc.FunctionHandler
+    setup(context) do
+      function_handler_stub = TinySvcLocal.FunctionHandler
       |> double
       |> allow(:invoke, fn(_, model, _) -> {:ok, model} end)
 
-      application_stub = Application
+      core_stub = TinySvcCore
       |> double
-      |> allow(:get_env, fn(:tiny_svc_core, :function_handler) -> function_handler_stub end)
+      |> allow(:strategy, fn(FunctionHandler) -> function_handler_stub end)
 
+      deps = [core: core_stub]
+      Map.put(context, :deps, deps)
+    end
+
+    test "invokes the configured function handler", %{deps: deps} do
       service = %Service{name: "foo"}
       model = Model.new()
-      deps = [application: application_stub]
       Invoker.invoke(service, model, "function_name", deps)
       assert_receive({:invoke, ^service, response_model, "function_name"})
       assert response_model.req == model.req
     end
 
-    test "assigns an invocation id" do
-      function_handler_stub = TinySvc.FunctionHandler
-      |> double
-      |> allow(:invoke, fn(_, model, _) -> {:ok, model} end)
-
-      application_stub = Application
-      |> double
-      |> allow(:get_env, fn(:tiny_svc_core, :function_handler) -> function_handler_stub end)
-
+    test "assigns an invocation id", %{deps: deps} do
       service = %Service{name: "foo"}
       model = Model.new()
-      deps = [application: application_stub]
       Invoker.invoke(service, model, "function_name", deps)
       assert_receive({:invoke, ^service, model, "function_name"})
       assert model.invocation_id
