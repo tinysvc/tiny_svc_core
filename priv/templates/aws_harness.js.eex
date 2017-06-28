@@ -1,0 +1,16 @@
+var protobuf = require("protobufjs");
+var protofile = "./model.proto";
+
+var func = require("./<%= function_name %>.js");
+exports.handler = (e, context, callback) => {
+  protobuf.load(protofile, function(err, root) {
+    var Model = root.lookupType("Model");
+    var buffer = Buffer.from(e.message, 'base64');
+    var model = Model.decode(buffer);
+    func(model, function(err, response) {
+      model = Model.fromObject(model);
+      response_message = Model.encode(model).finish().toString('base64');
+      callback(null, {response_message: response_message});
+    });
+  });
+};

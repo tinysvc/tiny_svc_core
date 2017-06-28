@@ -26,6 +26,7 @@ defmodule TinySvcCore.Mixfile do
       {:poison, "~> 2.0"},
       {:uuid, "~> 1.1"},
       {:porcelain, "~> 2.0"},
+      {:ex_aws, "~> 1.0"},
       {:double, "~> 0.6.0", only: :test},
     ]
   end
