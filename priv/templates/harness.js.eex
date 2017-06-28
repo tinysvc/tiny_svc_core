@@ -1,6 +1,6 @@
 var readline = require("readline");
 var protobuf = require("protobufjs");
-var protofile = "./services/foo/model.proto";
+var protofile = "./model.proto";
 var function_name = process.argv[2];
 
 var handler = require("./" + function_name + ".js");

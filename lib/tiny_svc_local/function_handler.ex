@@ -62,8 +62,9 @@ defmodule TinySvcLocal.FunctionHandler do
   end
 
   defp spawn_function(service, function_name) do
-    filepath = "services/#{service.name}/harness.js #{function_name}"
-    Porcelain.spawn_shell("node #{filepath}", [in: :receive, out: {:send, self()}])
+    File.cd!("services/#{service.name}", fn ->
+      Porcelain.spawn_shell("node harness.js #{function_name}", [in: :receive, out: {:send, self()}])
+    end)
   end
 
   defp via_tuple(service, function_name) do

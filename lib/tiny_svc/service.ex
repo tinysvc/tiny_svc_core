@@ -9,6 +9,7 @@ defmodule TinySvc.Service do
     deps[:tinyfile].create(name, tinyfile_entries)
     TinySvc.Utils.write_template(dir, {:tiny_svc_core, "harness.js"}, [], deps)
     TinySvc.Utils.write_template(dir, {:tiny_svc_core, "package.json"}, [service_name: name], deps)
+    deps[:file].copy!(Path.join(:code.priv_dir(:tiny_svc_core), "model.proto"), "#{dir}/model.proto")
     extra_files
     |> Enum.each(fn({name, content}) ->
       deps[:file].write!("#{dir}/#{name}", content)
