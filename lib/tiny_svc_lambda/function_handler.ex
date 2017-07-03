@@ -60,7 +60,7 @@ defmodule TinySvcLambda.FunctionHandler do
   end
 
   defp push_to_lambda(service, function_name, zipfilename, dir) do
-    function_config = Application.get_env(:tiny_svc_core, :aws_function_config)
+    function_config = Application.get_env(:tiny_svc_core, :aws) |> Map.get(:function_config)
     lambda_name = lambda_name(service, function_name)
     {:ok, bytes} = File.read("#{dir}/#{zipfilename}")
     data = Base.encode64(bytes)
@@ -74,6 +74,7 @@ defmodule TinySvcLambda.FunctionHandler do
   end
 
   defp lambda_name(service, function_name) do
-    "#{service.name}_#{function_name}"
+    env = Application.get_env(:tiny_svc_core, :aws) |> Map.get(:function_env)
+    "#{env}_#{service.name}_#{function_name}"
   end
 end
