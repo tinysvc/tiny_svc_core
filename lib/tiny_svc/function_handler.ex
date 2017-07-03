@@ -8,6 +8,6 @@ defmodule TinySvc.FunctionHandler do
   @type service :: %TinySvc.Service{}
   @type model :: %TinySvc.Model.Model{}
 
-  #@callback create_function(function_name, code_dir, filename, keyword) :: {:ok, any} | {:error, any}
   @callback invoke(service, model, function_name) :: {:ok, model} | {:error, any}
+  @callback update(service, function_name) :: :ok | {:error, any}
 end

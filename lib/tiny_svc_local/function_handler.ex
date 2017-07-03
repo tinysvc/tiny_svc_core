@@ -27,6 +27,11 @@ defmodule TinySvcLocal.FunctionHandler do
     GenServer.call(name, {:invoke, service, model, function_name})
   end
 
+  def update(_service, _function_name) do
+    # TODO: This should restart the proc with the new code
+    {:error, :notimplemented}
+  end
+
   # SERVER
 
   def handle_call({:invoke, service, model, function_name}, _from, state) do
