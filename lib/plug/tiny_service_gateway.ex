@@ -23,6 +23,14 @@ defmodule Plug.TinyServiceGateway do
     subdomain = String.replace(host, ~r/.?#{root_host}/, "")
     service   = opts[:service_manager].find(subdomain)
 
+    case service do
+      nil -> not_found(conn, "Service not found for this address")
+      _ -> invoke_service(conn, service, opts)
+    end
+
+  end
+
+  defp invoke_service(conn, service, opts) do
     conn = conn
     |> Plug.Conn.fetch_cookies
     |> Plug.Conn.fetch_query_params
@@ -34,7 +42,7 @@ defmodule Plug.TinyServiceGateway do
     req = update_path_params(req)
     function_name = funcs |> List.first # Assuming only one handler for http calls right now
     case function_name do
-      nil -> not_found(conn)
+      nil -> not_found(conn, "Function could not be found for this path")
       _ ->
         {:ok, res} = opts[:invoker].invoke(service, req, function_name)
         update_response_conn(res, conn)
@@ -88,7 +96,7 @@ defmodule Plug.TinyServiceGateway do
     put_in(model.req.params, params)
   end
 
-  defp not_found(conn) do
-    send_resp(conn, 404, "not found")
+  defp not_found(conn, msg) do
+    send_resp(conn, 404, msg)
   end
 end
