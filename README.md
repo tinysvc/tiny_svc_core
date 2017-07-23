@@ -1,3 +1,3 @@
 # TinySvcCore
 
-Common library for TinySvc
+Common library for [TinySvc](https://www.tinysvc.com)
