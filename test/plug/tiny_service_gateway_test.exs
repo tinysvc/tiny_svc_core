@@ -85,6 +85,15 @@ defmodule Plug.TinyServiceGatewayTest do
       assert conn.state == :sent
     end
 
+    test "sends 404 when service manager finds no matching service" do
+      opts = stub_opts()
+      conn = conn(:get, "http://invalid-service.tinysvc.dev/hello")
+      conn = GatewayPlug.call(conn, opts)
+      refute_receive({:invoke, _service, _, _})
+      assert conn.status == 404
+      assert conn.state == :sent
+    end
+
     test "puts path_params into params" do
       function_router_stub = FunctionRouter
       |> double
@@ -208,6 +217,7 @@ defmodule Plug.TinyServiceGatewayTest do
 
     service_manager_stub = TinySvc.ServiceManager
     |> double
+    |> allow(:find, fn("invalid-service") -> nil end)
     |> allow(:find, fn(name) -> %Service{name: name} end)
 
     [invoker: invoker_stub, router: router_stub, service_manager: service_manager_stub]
